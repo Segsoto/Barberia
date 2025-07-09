@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chamaco The Barber - Tu estilo, nuestra pasión</title>
+    <meta name="description" content="Barbería moderna en el corazón de la ciudad. Cortes profesionales con estilo urbano y atención personalizada.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="scissors-icon">
+                <i class="fas fa-cut"></i>
+            </div>
+            <h2>CHAMACO THE BARBER</h2>
+            <div class="loading-bar"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h1>CHAMACO<span> THE BARBER</span></h1>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="#home" class="nav-link">Inicio</a>
+                <a href="#services" class="nav-link">Servicios</a>
+                <a href="#gallery" class="nav-link">Galería</a>
+                <a href="#booking" class="nav-link">Citas</a>
+                <a href="#contact" class="nav-link">Contacto</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="line-1">TU ESTILO,</span>
+                <span class="line-2">NUESTRA PASIÓN</span>
+            </h1>
+            <p class="hero-subtitle">Cortes profesionales con actitud urbana en el corazón de la ciudad</p>
+            <div class="hero-buttons">
+                <a href="#booking" class="btn btn-primary">Reservar Cita</a>
+                <a href="#services" class="btn btn-secondary">Ver Servicios</a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <span>Desliza hacia abajo</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">NUESTROS SERVICIOS</h2>
+                <p class="section-subtitle">Experiencias únicas para cada estilo</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3>Corte Clásico</h3>
+                    <p>Cortes tradicionales con un toque moderno y personalizado</p>
+                    <span class="price">₡15,000</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-beard"></i>
+                    </div>
+                    <h3>Arreglo de Barba</h3>
+                    <p>Perfilado y cuidado profesional para tu barba perfecta</p>
+                    <span class="price">₡8,000</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-spray-can"></i>
+                    </div>
+                    <h3>Fade Premium</h3>
+                    <p>Degradados perfectos con técnicas de última generación</p>
+                    <span class="price">₡18,000</span>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Combo Completo</h3>
+                    <p>Corte + Barba + Styling para una experiencia total</p>
+                    <span class="price">₡25,000</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">NUESTRA GALERÍA</h2>
+                <p class="section-subtitle">Algunos de nuestros trabajos más destacados</p>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=400&fit=crop" alt="Corte moderno" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>Fade Moderno</h4>
+                        <p>Degradado perfecto</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&h=400&fit=crop" alt="Corte clásico" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>Clásico Elegante</h4>
+                        <p>Estilo atemporal</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&h=400&fit=crop" alt="Barba styling" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>Barba Premium</h4>
+                        <p>Cuidado profesional</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400&h=400&fit=crop" alt="Corte urbano" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>Estilo Urbano</h4>
+                        <p>Actitud y personalidad</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop" alt="Corte premium" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>Premium Cut</h4>
+                        <p>Técnica avanzada</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1582992015-stKuKGKJGf4?w=400&h=400&fit=crop" alt="Styling completo" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>Styling Completo</h4>
+                        <p>Experiencia total</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="booking" class="booking">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">RESERVA TU CITA</h2>
+                <p class="section-subtitle">Selecciona el día y hora que mejor te convenga</p>
+            </div>
+            <div class="booking-container">
+                <div class="booking-form-container">
+                    <form id="booking-form" class="booking-form">
+                        <div class="form-group">
+                            <label for="service">Servicio</label>
+                            <select id="service" name="service" required>
+                                <option value="">Selecciona un servicio</option>
+                                <option value="corte-clasico">Corte Clásico - ₡15,000</option>
+                                <option value="arreglo-barba">Arreglo de Barba - ₡8,000</option>
+                                <option value="fade-premium">Fade Premium - ₡18,000</option>
+                                <option value="combo-completo">Combo Completo - ₡25,000</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date">Fecha</label>
+                            <input type="date" id="date" name="date" required min="">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="time">Hora</label>
+                            <select id="time" name="time" required>
+                                <option value="">Selecciona una hora</option>
+                                <!-- Las opciones se llenarán dinámicamente -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="name">Nombre Completo</label>
+                            <input type="text" id="name" name="name" required placeholder="Tu nombre completo">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Correo Electrónico</label>
+                            <input type="email" id="email" name="email" required placeholder="tu@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Teléfono</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="8888-8888">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notes">Notas adicionales (opcional)</label>
+                            <textarea id="notes" name="notes" placeholder="Alguna preferencia especial..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-full">
+                            <span class="btn-text">Confirmar Cita</span>
+                            <span class="btn-loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                Enviando...
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">CONTACTO</h2>
+                <p class="section-subtitle">¿Tienes alguna pregunta? Estamos aquí para ayudarte</p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Ubicación</h4>
+                            <p>San José, Costa Rica<br>Centro Comercial Plaza del Sol</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Teléfono</h4>
+                            <p>+506 8888-8888</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Horarios</h4>
+                            <p>Lun - Sáb: 9:00 AM - 7:00 PM<br>Dom: 10:00 AM - 5:00 PM</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Email</h4>
+                            <p>info@chamacothebarber.com</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form-container">
+                    <form id="contact-form" class="contact-form">
+                        <div class="form-group">
+                            <input type="text" name="contact_name" placeholder="Tu nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="contact_email" placeholder="Tu email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="subject" placeholder="Asunto" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" placeholder="Tu mensaje" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Enviar Mensaje</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>CHAMACO THE BARBER</h3>
+                    <p>Donde el estilo urbano se encuentra con la tradición barbera.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="#home">Inicio</a></li>
+                        <li><a href="#services">Servicios</a></li>
+                        <li><a href="#gallery">Galería</a></li>
+                        <li><a href="#booking">Reservar Cita</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Horarios</h4>
+                    <ul>
+                        <li>Lunes - Sábado: 9:00 AM - 7:00 PM</li>
+                        <li>Domingo: 10:00 AM - 5:00 PM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Chamaco The Barber. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>¡Cita Confirmada!</h3>
+                <p>Tu cita ha sido reservada exitosamente. Te enviaremos un correo de confirmación en breve.</p>
+                <button class="btn btn-primary" onclick="closeModal()">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/scripts.js"></script>
+</body>
+</html>
