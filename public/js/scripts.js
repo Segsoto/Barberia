@@ -235,8 +235,15 @@ async function handleBookingSubmit(e) {
     bookingForm.classList.add('form-loading');
 
     try {
+        console.log('Sending booking request...', bookingData);
+        console.log('API URL:', '/api/book-appointment');
+        console.log('Current origin:', window.location.origin);
+        
+        // Try relative URL first, then absolute URL if it fails
+        let apiUrl = '/api/book-appointment';
+        
         // Send booking request
-        const response = await fetch('/api/book-appointment', {
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -244,24 +251,46 @@ async function handleBookingSubmit(e) {
             body: JSON.stringify(bookingData)
         });
 
+        console.log('Response received:', response.status, response.statusText);
+
         if (response.ok) {
+            const result = await response.json();
+            console.log('Success result:', result);
+            
             // Add slot to booked slots
             const slotKey = `${bookingData.date}_${bookingData.time}`;
             bookedSlots.add(slotKey);
             
-            // Show success modal
-            showSuccessModal();
+            // Show success modal with email status
+            let message = '¡Tu cita ha sido reservada exitosamente!';
+            if (result.emailSent) {
+                message += ' Te hemos enviado un correo de confirmación.';
+            } else if (result.emailError) {
+                message += ' La cita fue guardada, pero no pudimos enviar el correo de confirmación.';
+            }
+            
+            showSuccessModal(message);
             
             // Reset form
             bookingForm.reset();
             timeSelect.innerHTML = '<option value="">Selecciona una hora</option>';
             
         } else {
-            throw new Error('Error al procesar la reserva');
+            const errorText = await response.text();
+            console.error('Server error response:', errorText);
+            throw new Error(`Error del servidor: ${response.status} - ${errorText}`);
         }
     } catch (error) {
-        console.error('Error:', error);
-        showErrorMessage('Error al enviar la reserva. Por favor, inténtalo de nuevo.');
+        console.error('Detailed error:', error);
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        
+        if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+            showErrorMessage('Error de conexión. Verifica tu conexión a internet o inténtalo más tarde.');
+        } else {
+            showErrorMessage(`Error al enviar la reserva: ${error.message}`);
+        }
     } finally {
         // Remove loading state
         submitBtn.classList.remove('loading');
@@ -394,7 +423,14 @@ function getContactFieldLabel(field) {
 }
 
 // Modal functions
-function showSuccessModal() {
+function showSuccessModal(customMessage) {
+    const modal = document.getElementById('success-modal');
+    const messageElement = modal.querySelector('.modal-body p');
+    
+    if (customMessage && messageElement) {
+        messageElement.textContent = customMessage;
+    }
+    
     successModal.style.display = 'block';
     document.body.style.overflow = 'hidden';
 }
