@@ -1,6 +1,17 @@
 const nodemailer = require('nodemailer');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle preflight request
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
     // Only allow POST requests
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
@@ -29,10 +40,21 @@ export default async function handler(req, res) {
         const transporter = nodemailer.createTransporter({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL_USER, // tu-email@gmail.com
-                pass: process.env.EMAIL_PASS  // tu-contraseña-de-aplicación
+                user: process.env.EMAIL_USER, // brandonsoto1908@gmail.com
+                pass: process.env.EMAIL_PASS  // contraseña sin espacios
             }
         });
+
+        // Verify transporter configuration (but don't fail if it doesn't work)
+        let transporterWorking = true;
+        try {
+            await transporter.verify();
+            console.log('Email transporter verified successfully');
+        } catch (error) {
+            console.error('Email transporter verification failed:', error.message);
+            transporterWorking = false;
+            // Continue anyway - sometimes verify fails but sending still works
+        }
 
         // Get service details
         const serviceDetails = getServiceDetails(service);
@@ -195,38 +217,75 @@ export default async function handler(req, res) {
         </html>
         `;
 
-        // Send email to barber
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: process.env.BARBER_EMAIL || process.env.EMAIL_USER, // Email del barbero
-            subject: `Nueva Cita - ${name} - ${formattedDate} ${formattedTime}`,
-            html: barberEmailHtml
-        });
+        // Send emails with better error handling
+        let emailsSuccessful = true;
+        let emailErrors = [];
 
-        // Send confirmation email to customer
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'Cita Confirmada - Chamaco The Barber',
-            html: customerEmailHtml
-        });
+        try {
+            // Send email to barber
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: process.env.BARBER_EMAIL || process.env.EMAIL_USER, // Email del barbero
+                subject: `Nueva Cita - ${name} - ${formattedDate} ${formattedTime}`,
+                html: barberEmailHtml
+            });
+            console.log('Email to barber sent successfully');
+        } catch (error) {
+            console.error('Error sending email to barber:', error.message);
+            emailErrors.push('Error enviando email al barbero');
+            emailsSuccessful = false;
+        }
 
-        // Return success response
+        try {
+            // Send confirmation email to customer
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: 'Cita Confirmada - Chamaco The Barber',
+                html: customerEmailHtml
+            });
+            console.log('Confirmation email to customer sent successfully');
+        } catch (error) {
+            console.error('Error sending confirmation email:', error.message);
+            emailErrors.push('Error enviando email de confirmación');
+            emailsSuccessful = false;
+        }
+
+        // Return success response (even if emails failed, the appointment is still recorded)
         res.status(200).json({ 
-            message: 'Cita reservada exitosamente',
+            message: emailsSuccessful ? 
+                'Cita reservada exitosamente' : 
+                'Cita reservada exitosamente (algunos emails pueden no haberse enviado)',
             appointment: {
                 service: serviceDetails.name,
                 date: formattedDate,
                 time: formattedTime,
                 name,
                 email
+            },
+            emailStatus: {
+                successful: emailsSuccessful,
+                errors: emailErrors
             }
         });
 
     } catch (error) {
         console.error('Error processing appointment:', error);
+        
+        // Send more detailed error information
+        let errorMessage = 'Error interno del servidor.';
+        
+        if (error.message.includes('Invalid login')) {
+            errorMessage = 'Error de configuración de email. Contacta al administrador.';
+        } else if (error.message.includes('Network')) {
+            errorMessage = 'Error de conexión. Por favor, inténtalo de nuevo.';
+        } else if (error.message.includes('timeout')) {
+            errorMessage = 'Tiempo de espera agotado. Por favor, inténtalo de nuevo.';
+        }
+        
         res.status(500).json({ 
-            message: 'Error interno del servidor. Por favor, inténtalo de nuevo.' 
+            message: errorMessage,
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 }

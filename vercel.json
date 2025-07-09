@@ -16,16 +16,12 @@
       "dest": "/api/$1"
     },
     {
-      "src": "/(.*)",
+      "src": "/(.*\\.(css|js|png|jpg|jpeg|gif|ico|svg))",
       "dest": "/public/$1"
-    }
-  ],
-  "functions": {
-    "api/book-appointment.js": {
-      "maxDuration": 30
     },
-    "api/send-contact.js": {
-      "maxDuration": 30
+    {
+      "src": "/(.*)",
+      "dest": "/public/index.html"
     }
-  }
+  ]
 }

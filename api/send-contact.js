@@ -1,6 +1,17 @@
 const nodemailer = require('nodemailer');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle preflight request
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
     // Only allow POST requests
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
@@ -28,10 +39,19 @@ export default async function handler(req, res) {
         const transporter = nodemailer.createTransporter({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL_USER, // tu-email@gmail.com
-                pass: process.env.EMAIL_PASS  // tu-contraseña-de-aplicación
+                user: process.env.EMAIL_USER, // brandonsoto1908@gmail.com
+                pass: process.env.EMAIL_PASS  // contraseña sin espacios
             }
         });
+
+        // Verify transporter configuration
+        try {
+            await transporter.verify();
+            console.log('Email transporter ready');
+        } catch (error) {
+            console.error('Email transporter error:', error);
+            throw new Error('Configuración de email incorrecta');
+        }
 
         // Email to barber/business owner
         const contactEmailHtml = `

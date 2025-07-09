@@ -4,10 +4,11 @@
   "description": "Página web moderna para barbería Chamaco The Barber con sistema de reservas",
   "main": "public/index.html",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "vercel dev --listen 3000",
     "build": "echo 'Build completed'",
     "start": "vercel dev",
-    "deploy": "vercel --prod"
+    "deploy": "vercel --prod",
+    "test-local": "node -e \"console.log('Proyecto listo para desplegar'); console.log('Variables configuradas:', {EMAIL_USER: process.env.EMAIL_USER, BARBER_EMAIL: process.env.BARBER_EMAIL});\""
   },
   "keywords": [
     "barbería",
