@@ -59,15 +59,32 @@ module.exports = async function handler(req, res) {
 
         try {
             console.log('Attempting to send email notification...');
+            console.log('Environment variables check:', {
+                EMAIL_USER: process.env.EMAIL_USER ? 'Set' : 'Missing',
+                EMAIL_PASS: process.env.EMAIL_PASS ? 'Set' : 'Missing',
+                BARBER_EMAIL: process.env.BARBER_EMAIL ? 'Set' : 'Missing'
+            });
+
+            // Check if email credentials are available
+            if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+                throw new Error('Email credentials not configured');
+            }
             
-            // Configure email transporter
+            // Configure email transporter with more specific settings
             const transporter = nodemailer.createTransporter({
                 service: 'gmail',
                 auth: {
                     user: process.env.EMAIL_USER,
                     pass: process.env.EMAIL_PASS
-                }
+                },
+                secure: true,
+                port: 465
             });
+
+            // Test connection first
+            console.log('Testing email connection...');
+            await transporter.verify();
+            console.log('Email connection verified successfully');
 
             // Get service details
             const serviceDetails = getServiceDetails(service);
