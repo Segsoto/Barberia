@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug API - Chamaco The Barber</title>
+</head>
+<body>
+    <h1>Debug API Test</h1>
+    
+    <div id="results"></div>
+    
+    <button onclick="testBookingAPIGet()">Test Booking API (GET)</button>
+    <button onclick="testBookingAPI()">Test Booking API (POST)</button>
+    <button onclick="testContactAPI()">Test Contact API</button>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        
+        function logResult(message) {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            resultsDiv.appendChild(p);
+        }
+        
+        async function testBookingAPIGet() {
+            logResult('Testing booking API with GET...');
+            
+            try {
+                logResult(`Making GET request to: ${window.location.origin}/api/book-appointment`);
+                
+                const response = await fetch('/api/book-appointment', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                logResult(`Response status: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    logResult(`✅ GET Success: ${JSON.stringify(result)}`);
+                } else {
+                    const errorText = await response.text();
+                    logResult(`❌ GET Error response: ${errorText}`);
+                }
+                
+            } catch (error) {
+                logResult(`❌ GET Fetch error: ${error.message}`);
+                logResult(`❌ GET Error stack: ${error.stack}`);
+            }
+        }
+        
+        async function testBookingAPI() {
+            logResult('Testing booking API...');
+            
+            const testData = {
+                service: 'Corte de Cabello',
+                date: '2024-01-15',
+                time: '10:00',
+                name: 'Test User',
+                email: 'test@example.com',
+                phone: '123456789',
+                notes: 'Test booking'
+            };
+            
+            try {
+                logResult(`Making request to: ${window.location.origin}/api/book-appointment`);
+                
+                const response = await fetch('/api/book-appointment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                logResult(`Response status: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    logResult(`✅ Success: ${JSON.stringify(result)}`);
+                } else {
+                    const errorText = await response.text();
+                    logResult(`❌ Error response: ${errorText}`);
+                }
+                
+            } catch (error) {
+                logResult(`❌ Fetch error: ${error.message}`);
+                logResult(`❌ Error stack: ${error.stack}`);
+            }
+        }
+        
+        async function testContactAPI() {
+            logResult('Testing contact API...');
+            
+            const testData = {
+                name: 'Test User',
+                email: 'test@example.com',
+                subject: 'Test Contact',
+                message: 'This is a test message'
+            };
+            
+            try {
+                logResult(`Making request to: ${window.location.origin}/api/send-contact`);
+                
+                const response = await fetch('/api/send-contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                logResult(`Response status: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    logResult(`✅ Success: ${JSON.stringify(result)}`);
+                } else {
+                    const errorText = await response.text();
+                    logResult(`❌ Error response: ${errorText}`);
+                }
+                
+            } catch (error) {
+                logResult(`❌ Fetch error: ${error.message}`);
+                logResult(`❌ Error stack: ${error.stack}`);
+            }
+        }
+        
+        // Test on page load
+        window.addEventListener('load', function() {
+            logResult('Page loaded successfully');
+            logResult(`Current URL: ${window.location.href}`);
+            logResult(`API Base URL: ${window.location.origin}/api/`);
+        });
+    </script>
+</body>
+</html>
