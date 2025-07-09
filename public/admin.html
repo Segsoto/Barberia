@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Chamaco The Barber</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff4444;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff4444;
+        }
+
+        .stat-label {
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        button {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #ff6666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #ff4444;
+        }
+
+        .appointments-table {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .status.pendiente {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .status.confirmada {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+
+        .status.completada {
+            background: rgba(108, 117, 125, 0.2);
+            color: #6c757d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+
+        .error {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .appointments-table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 8px 4px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Panel de Administración</h1>
+        <p style="text-align: center; margin-bottom: 30px; opacity: 0.8;">Gestión de Citas - Chamaco The Barber</p>
+
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCitas">-</div>
+                <div class="stat-label">Total de Citas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="citasHoy">-</div>
+                <div class="stat-label">Citas Hoy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="citasPendientes">-</div>
+                <div class="stat-label">Pendientes</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="loadAppointments()">🔄 Actualizar</button>
+            <button onclick="exportToCSV()">📊 Exportar CSV</button>
+            <span style="margin-left: auto; opacity: 0.7;" id="lastUpdate"></span>
+        </div>
+
+        <div id="error-container"></div>
+        <div id="loading" class="loading">Cargando citas...</div>
+
+        <div class="appointments-table" id="appointmentsContainer" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Cliente</th>
+                        <th>Servicio</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Estado</th>
+                        <th>Notas</th>
+                    </tr>
+                </thead>
+                <tbody id="appointmentsBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <h3>📭 No hay citas registradas</h3>
+            <p>Las citas aparecerán aquí cuando los clientes hagan reservas.</p>
+        </div>
+    </div>
+
+    <script>
+        let allAppointments = [];
+
+        async function loadAppointments() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('appointmentsContainer');
+            const emptyState = document.getElementById('emptyState');
+            const errorContainer = document.getElementById('error-container');
+            
+            loading.style.display = 'block';
+            container.style.display = 'none';
+            emptyState.style.display = 'none';
+            errorContainer.innerHTML = '';
+
+            try {
+                console.log('Fetching appointments...');
+                const response = await fetch('/api/get-appointments');
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Appointments data:', data);
+                
+                allAppointments = data.appointments || [];
+                
+                if (allAppointments.length === 0) {
+                    loading.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    updateStats([]);
+                } else {
+                    displayAppointments(allAppointments);
+                    updateStats(allAppointments);
+                    loading.style.display = 'none';
+                    container.style.display = 'block';
+                }
+                
+                document.getElementById('lastUpdate').textContent = 
+                    `Última actualización: ${new Date().toLocaleTimeString()}`;
+                
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                loading.style.display = 'none';
+                
+                errorContainer.innerHTML = `
+                    <div class="error">
+                        <strong>Error al cargar las citas:</strong> ${error.message}
+                        <br><small>Nota: Es necesario configurar la base de datos Airtable.</small>
+                    </div>
+                `;
+            }
+        }
+
+        function displayAppointments(appointments) {
+            const tbody = document.getElementById('appointmentsBody');
+            tbody.innerHTML = '';
+
+            appointments.forEach(appointment => {
+                const row = document.createElement('tr');
+                
+                // Format date
+                const date = new Date(appointment.fecha);
+                const formattedDate = date.toLocaleDateString('es-ES');
+                
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${appointment.hora}</td>
+                    <td><strong>${appointment.nombre}</strong></td>
+                    <td>${appointment.servicio}<br><small style="opacity:0.7">${appointment.precio}</small></td>
+                    <td><a href="tel:${appointment.telefono}" style="color: #ff4444">${appointment.telefono}</a></td>
+                    <td><a href="mailto:${appointment.email}" style="color: #ff4444">${appointment.email}</a></td>
+                    <td><span class="status ${appointment.estado.toLowerCase()}">${appointment.estado}</span></td>
+                    <td>${appointment.notas || '-'}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateStats(appointments) {
+            const total = appointments.length;
+            const today = new Date().toISOString().split('T')[0];
+            const citasHoy = appointments.filter(apt => apt.fecha === today).length;
+            const pendientes = appointments.filter(apt => apt.estado === 'Pendiente').length;
+
+            document.getElementById('totalCitas').textContent = total;
+            document.getElementById('citasHoy').textContent = citasHoy;
+            document.getElementById('citasPendientes').textContent = pendientes;
+        }
+
+        function exportToCSV() {
+            if (allAppointments.length === 0) {
+                alert('No hay citas para exportar');
+                return;
+            }
+
+            const headers = ['Fecha', 'Hora', 'Cliente', 'Email', 'Teléfono', 'Servicio', 'Precio', 'Estado', 'Notas'];
+            const csvContent = [
+                headers.join(','),
+                ...allAppointments.map(apt => [
+                    apt.fecha,
+                    apt.hora,
+                    `"${apt.nombre}"`,
+                    apt.email,
+                    apt.telefono,
+                    `"${apt.servicio}"`,
+                    `"${apt.precio}"`,
+                    apt.estado,
+                    `"${apt.notas || ''}"`
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `citas_chamaco_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Load appointments when page loads
+        window.addEventListener('load', loadAppointments);
+    </script>
+</body>
+</html>

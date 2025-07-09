@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const Airtable = require('airtable');
 
 module.exports = async function handler(req, res) {
     console.log('=== API Handler Started ===');
@@ -52,6 +53,51 @@ module.exports = async function handler(req, res) {
         }
 
         console.log('Processing booking...', { service, date, time, name, email, phone });
+
+        // Save booking to database (Airtable)
+        let bookingSaved = false;
+        let bookingId = null;
+        let dbError = null;
+
+        try {
+            console.log('Saving booking to database...');
+            
+            // Configure Airtable (only if credentials are available)
+            if (process.env.AIRTABLE_API_KEY && process.env.AIRTABLE_BASE_ID) {
+                const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
+                
+                const serviceDetails = getServiceDetails(service);
+                
+                // Create record in Airtable
+                const record = await base('Citas').create([
+                    {
+                        fields: {
+                            'Nombre': name,
+                            'Email': email,
+                            'Teléfono': phone,
+                            'Servicio': serviceDetails.name,
+                            'Precio': serviceDetails.price,
+                            'Fecha': date,
+                            'Hora': time,
+                            'Notas': notes || '',
+                            'Estado': 'Pendiente',
+                            'Fecha_Creacion': new Date().toISOString(),
+                        }
+                    }
+                ]);
+                
+                bookingId = record[0].getId();
+                bookingSaved = true;
+                console.log('Booking saved to database with ID:', bookingId);
+            } else {
+                console.log('Database credentials not configured - skipping database save');
+                dbError = 'Database not configured';
+            }
+        } catch (error) {
+            console.error('Failed to save booking to database:', error.message);
+            dbError = error.message;
+            // Continue - don't fail the booking just because database failed
+        }
 
         // Try to send email notification, but don't fail if it doesn't work
         let emailSent = false;
@@ -155,10 +201,17 @@ module.exports = async function handler(req, res) {
                 email,
                 phone,
                 notes: notes || '',
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                bookingId: bookingId
             },
-            emailSent,
-            emailError: emailSent ? null : emailError
+            database: {
+                saved: bookingSaved,
+                error: bookingSaved ? null : dbError
+            },
+            email: {
+                sent: emailSent,
+                error: emailSent ? null : emailError
+            }
         });
 
     } catch (error) {
